@@ -4,6 +4,10 @@ import math
 from numpy.linalg import inv
 from numpy.linalg import norm
 
+def driver():
+    x0 = (1,1)
+
+
 def evalF(x):
 
     F = np.zeros(2)
@@ -70,3 +74,5 @@ def LazyNewton(x0,tol,Nmax):
     xstar = x1
     ier = 1
     return[xstar,xlist,ier,its]
+
+    driver()
