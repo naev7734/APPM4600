@@ -6,6 +6,7 @@ from numpy.linalg import norm
 
 def driver():
     x0 = (1,1)
+    
 
 
 def evalF(x):

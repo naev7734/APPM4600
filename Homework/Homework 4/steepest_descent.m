@@ -33,7 +33,7 @@ Instructor: Eduardo Corona
 
 params.c1 = 10^-3; params.c2 = 0.9; params.maxback=10; xn=x0; 
 n=0; rn(:,1)=x0; 
-alpha=1/2; 
+alpha=1; 
 fn = fun(xn); 
 pn = -Gfun(xn); 
 
