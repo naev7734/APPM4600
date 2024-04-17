@@ -10,11 +10,16 @@ def driver():
     m = 7 #order of polynomial
     Lamb = .5 #Lambda
     h = (b-a)/n
+    
     noise = np.random.normal(0,h,n) #create gaussian noise where 1 standard deviation is the same as the step size h
+
     x_int = np.linspace(a,b,n)
+
     f = lambda x: np.sin(x) + np.sin(5*x) #function
-    #f = lambda x: x
-    y_int = np.transpose(np.array([f(x_int) + noise]))#interpolation data
+    f_1der = lambda x: np.cos(x) + 5*np.cos(5*x) #first derivative
+    f_2der = lambda x: -1*np.sin(x) - 25*np.sin(5*x) #second derivative
+
+    y_int = f(x_int) + noise #interpolation data
 
 
     coeff_ls = Tikhonov(x_int,y_int,m,0) #coefficients of resulting polynomial using regular least squares
@@ -33,6 +38,38 @@ def driver():
     plt.legend(['Data','True Function','Regular LS Estimate','Tikhonov Estimate'])
     plt.show()
 
+    #DERIVATIVE STUFF
+    #First derivative
+    coeff_1der_ls = np.polyder(coeff_ls)
+    coeff_1der_TK = np.polyder(coeff_TK)
+
+    y_poly_1der_ls = np.polyval(coeff_1der_ls,x_graph)
+    y_poly_1der_TK = np.polyval(coeff_1der_TK,x_graph)
+
+    y_graph_1der = f_1der(x_graph)
+
+
+    plt.plot(x_graph,y_graph_1der)
+    plt.plot(x_graph,y_poly_1der_ls)
+    plt.plot(x_graph,y_poly_1der_TK)
+    plt.legend(['True Function','Regular LS Estimate','Tikhonov Estimate'])
+    plt.show()
+
+    #Second derivative
+    coeff_2der_ls = np.polyder(coeff_1der_ls)
+    coeff_2der_TK = np.polyder(coeff_1der_TK)
+
+    y_poly_2der_ls = np.polyval(coeff_2der_ls,x_graph)
+    y_poly_2der_TK = np.polyval(coeff_2der_TK,x_graph)
+
+    y_graph_2der = f_2der(x_graph)
+
+
+    plt.plot(x_graph,y_graph_2der)
+    plt.plot(x_graph,y_poly_2der_ls)
+    plt.plot(x_graph,y_poly_2der_TK)
+    plt.legend(['True Function','Regular LS Estimate','Tikhonov Estimate'])
+    plt.show()
 
 
 
