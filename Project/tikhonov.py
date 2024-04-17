@@ -10,7 +10,7 @@ def driver():
     m = 7 #order of polynomial
     Lamb = .5 #Lambda
     h = (b-a)/n
-    
+
     noise = np.random.normal(0,h,n) #create gaussian noise where 1 standard deviation is the same as the step size h
 
     x_int = np.linspace(a,b,n)
@@ -31,11 +31,16 @@ def driver():
     y_poly_ls = np.polyval(coeff_ls,x_graph) #create data for plotting smooth line of polynomial approx using regular least squares
     y_poly_TK = np.polyval(coeff_TK,x_graph) #create data for plotting smooth line of polynomial approx using tikhonov
 
-    plt.plot(x_int,y_int,'o')
+    plt.plot(x_int,y_int,'o') #Plotting data, function, LS polynomial, Tikhonov polynomial
     plt.plot(x_graph,y_graph)
     plt.plot(x_graph,y_poly_ls)
     plt.plot(x_graph,y_poly_TK)
     plt.legend(['Data','True Function','Regular LS Estimate','Tikhonov Estimate'])
+    plt.show()
+
+    plt.plot(x_graph,abs(y_graph-y_poly_ls)) #Plotting error
+    plt.plot(x_graph,abs(y_graph-y_poly_TK))
+    plt.legend(['Regular LS Error','Tikhonov Error'])
     plt.show()
 
     #DERIVATIVE STUFF
@@ -55,6 +60,10 @@ def driver():
     plt.legend(['True Function','Regular LS Estimate','Tikhonov Estimate'])
     plt.show()
 
+    plt.plot(x_graph,abs(y_graph-y_poly_1der_ls)) #Plotting error
+    plt.plot(x_graph,abs(y_graph-y_poly_1der_TK))
+    plt.legend(['Regular LS Derivative Error','Tikhonov Derivative Error'])
+    plt.show()
     #Second derivative
     coeff_2der_ls = np.polyder(coeff_1der_ls)
     coeff_2der_TK = np.polyder(coeff_1der_TK)
