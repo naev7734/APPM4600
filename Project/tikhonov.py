@@ -100,10 +100,6 @@ def Tikhonov(x_int,y_int,m,Lamb):
     for i in range(m-1):
         D[i,i] = -0.5
         D[i,i+2] = 0.5
-    print(D)
-
-
-
 
     for i in range(m+1):
         for ii in range(n):
