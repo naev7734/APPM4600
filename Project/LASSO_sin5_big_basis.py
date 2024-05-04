@@ -7,7 +7,7 @@ def driver():
     'Inputs'
     a = 0 #endpoints
     b = 5
-    n = 20 #number of interpolation points
+    n = 10 #number of interpolation points
     h = (b-a)/n
     num_basis = 31    
 
@@ -49,10 +49,10 @@ def driver():
     'Plot Function and Approximation'
     plt.plot(x_int,y_int,'o')
     plt.plot(x_graph,y_graph)
-    #plt.plot(x_graph,y_graph_ls)
+    plt.plot(x_graph,y_graph_ls)
     plt.plot(x_graph,y_graph_RR)
     plt.plot(x_graph,y_graph_lasso)
-    #plt.legend(['Data','True Function','Regular LS','Ridge Regression','LASSO Approximation']) 
+    plt.legend(['Data','True Function','Regular LS','Ridge Regression','LASSO Approximation']) 
     plt.show()
 
     'Error'
@@ -61,6 +61,7 @@ def driver():
     error_LASSO = np.sum(np.abs(y_graph-y_graph_lasso))/fine
     print('The average error between the true function and the approximation using Regular Least Squares is',error_ls,'\nThe average error between the true function and the approximation using Ridge Regression is',error_RR,'\nThe average error between the true function and the approximation using LASSO is',error_LASSO)
 
+    'Plot Error'
     plt.semilogy(x_graph,abs(y_graph-y_graph_ls)) #Plotting error
     plt.semilogy(x_graph,abs(y_graph-y_graph_RR))
     plt.semilogy(x_graph,abs(y_graph-y_graph_lasso))    
