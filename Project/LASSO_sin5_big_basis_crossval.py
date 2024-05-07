@@ -12,7 +12,7 @@ def driver():
     h = (b-a)/n
     num_basis = 31
     np.random.seed(2)
-    std = .2
+    std = .5
 
 
     fine = 10000 #number of points to use for graphing and error calculation
@@ -32,7 +32,7 @@ def driver():
     y_control = f(x_control) + noise2
 
     'Graphing/Truth Data'
-    x_graph = np.linspace(a,b+h,fine) #create data for plotting smooth line of function 
+    x_graph = np.linspace(a,b,fine) #create data for plotting smooth line of function 
     y_graph = f(x_graph) #truth data
 
     'LASSO'
@@ -87,7 +87,13 @@ def driver():
     #plt.plot(x_graph,y_graph_ls)
     plt.plot(x_graph,y_graph_RR)
     plt.plot(x_graph,y_graph_lasso)
-    plt.legend(['Interpolation Data','Control Data','True Function','Ridge Regression','LASSO Approximation']) 
+    plt.title('Approximating f(x)=sin(x)+sin(5x)')
+    plt.legend(['Interpolation Data','Control Data','True Function','Ridge Regression','LASSO Approximation'])
+    #plt.legend(['Interpolation Data','Control Data','True Function','LASSO Approximation']) 
+    plt.grid()
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+
     plt.show()
 
     'Error'
@@ -99,7 +105,11 @@ def driver():
     'Plot Error'
     plt.semilogy(x_graph,abs(y_graph-y_graph_ls)) #Plotting error
     plt.semilogy(x_graph,abs(y_graph-y_graph_RR))
-    plt.semilogy(x_graph,abs(y_graph-y_graph_lasso))    
+    plt.semilogy(x_graph,abs(y_graph-y_graph_lasso))  
+    plt.title('Error in Approximating f(x)=sin(x)+sin(5x)')  
+    plt.grid()
+    plt.xlabel('x')
+    plt.ylabel('Error')
     plt.legend(['Regular LS Error','Ridge Regression Error','LASSO Error'])
     plt.show()
 

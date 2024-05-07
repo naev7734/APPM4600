@@ -13,6 +13,10 @@ def driver():
     num_basis = 17
     np.random.seed(2)
     std = .5
+    l1_ratio = .5
+    alpha = np.logspace(-8,3,num=20,base=2) #Define range of alpha values for Elastic Net
+    Lamb_2 = np.logspace(-16,16,num=1000,base=2) #Define range of lambda values for Ridge Regression
+
 
     fine = 10000 #number of points to use for graphing and error calculation
 
@@ -34,35 +38,33 @@ def driver():
     x_graph = np.linspace(a,b+h,fine) #create data for plotting smooth line of function 
     y_graph = f(x_graph) #truth data
 
-    'LASSO'
+    'EN'
     X = basis(x_int,np.ones(num_basis),num_basis) #CHANGE FOR # OF BASIS ELEMENTS
 
-    Lamb_1 = np.logspace(-8,3,num=20,base=2) #Define range of lambda values
 
-    lasso_coef = np.zeros([len(Lamb_1),num_basis]) #Preallocate variables
-    y_int_lasso = np.zeros([len(Lamb_1),n])
-    y_control_lasso = np.zeros([len(Lamb_1),n_control])
-    error_lasso = np.zeros(len(Lamb_1))
 
-    for i in range(len(Lamb_1)):
-        clf = linear_model.Lasso(Lamb_1[i]) #create the LASSO model
+    EN_coef = np.zeros([len(alpha),num_basis]) #Preallocate variables
+    y_int_EN = np.zeros([len(alpha),n])
+    y_control_EN = np.zeros([len(alpha),n_control])
+    error_EN = np.zeros(len(alpha))
+
+    for i in range(len(alpha)):
+        clf = linear_model.ElasticNet(alpha=alpha[i],l1_ratio=l1_ratio) #create the EN model
         clf.fit(X,y_int) #train it on your x and y data
-        lasso_coef[i,:] = clf.coef_ #save all of the coefficients
-        y_control_lasso[i,:] = np.sum(basis(x_control,lasso_coef[i,:],num_basis), axis=1) #find LASSO approx for control points
-        error_lasso[i] = np.sum(np.abs(y_control-y_control_lasso[i,:])**2)/n_control #find error for control points
+        EN_coef[i,:] = clf.coef_ #save all of the coefficients
+        y_control_EN[i,:] = np.sum(basis(x_control,EN_coef[i,:],num_basis), axis=1) #find EN approx for control points
+        error_EN[i] = np.sum(np.abs(y_control-y_control_EN[i,:])**2)/n_control #find error for control points
 
-    ind_best_lasso = np.argmin(error_lasso)
+    ind_best_EN = np.argmin(error_EN)
 
-    print(lasso_coef[ind_best_lasso,:])
-    print('Best Lambda for LASSO is:',Lamb_1[ind_best_lasso])
+    print(EN_coef[ind_best_EN,:])
+    print('Best alpha for EN is:',alpha[ind_best_EN])
 
 
-    y_graph_lasso = np.sum(basis(x_graph,lasso_coef[ind_best_lasso,:],num_basis), axis=1)
+    y_graph_EN = np.sum(basis(x_graph,EN_coef[ind_best_EN,:],num_basis), axis=1)
 
     'Regular Least Squares and Ridge Regression'
     coeff_ls = RR(x_int,y_int,num_basis,0) #coefficients of resulting polynomial using regular least squares
-
-    Lamb_2 = np.logspace(-16,16,num=1000,base=2) #Define range of lambda values
 
     coeff_RR = np.zeros([len(Lamb_2),num_basis])
     error_RR = np.zeros(len(Lamb_2))
@@ -84,32 +86,32 @@ def driver():
     plt.plot(x_int,y_int,'o')
     plt.plot(x_control,y_control,'o')
     plt.plot(x_graph,y_graph)
-    #plt.plot(x_graph,y_graph_ls)
-    #plt.plot(x_graph,y_graph_RR)
-    plt.plot(x_graph,y_graph_lasso)
+    plt.plot(x_graph,y_graph_ls)
+    plt.plot(x_graph,y_graph_RR)
+    plt.plot(x_graph,y_graph_EN)
     plt.title('Approximating f(x)=sin(x)+sin(5x)')
-    #plt.legend(['Interpolation Data','Control Data','True Function','Regular LS','Ridge Regression','LASSO Approximation'])
+    plt.legend(['Interpolation Data','Control Data','True Function','Regular LS','Ridge Regression','EN Approximation'])
     plt.grid()
     plt.xlabel('x')
     plt.ylabel('f(x)')
-    plt.legend(['Interpolation Data','Control Data','True Function','LASSO Approximation']) 
+    #plt.legend(['Interpolation Data','Control Data','True Function','EN Approximation']) 
     plt.show()
 
     'Error'
     error_ls_true = np.sum(np.abs(y_graph-y_graph_ls))/fine #find the true error, this is as opposed to the error compared to the control points used above
     error_RR_true = np.sum(np.abs(y_graph-y_graph_RR))/fine
-    error_lasso_true = np.sum(np.abs(y_graph-y_graph_lasso))/fine
-    print('The average error between the true function and the approximation using Regular Least Squares is',error_ls_true,'\nThe average error between the true function and the approximation using Ridge Regression is',error_RR_true,'\nThe average error between the true function and the approximation using LASSO is',error_lasso_true)
+    error_EN_true = np.sum(np.abs(y_graph-y_graph_EN))/fine
+    print('The average error between the true function and the approximation using Regular Least Squares is',error_ls_true,'\nThe average error between the true function and the approximation using Ridge Regression is',error_RR_true,'\nThe average error between the true function and the approximation using Elastic Net is',error_EN_true)
 
     'Plot Error'
     plt.semilogy(x_graph,abs(y_graph-y_graph_ls)) #Plotting error
     plt.semilogy(x_graph,abs(y_graph-y_graph_RR))
-    plt.semilogy(x_graph,abs(y_graph-y_graph_lasso))  
+    plt.semilogy(x_graph,abs(y_graph-y_graph_EN))  
     plt.title('Error in Approximating f(x)=sin(x)+sin(5x)')  
     plt.grid()
     plt.xlabel('x')
     plt.ylabel('Error')
-    plt.legend(['Regular LS Error','Ridge Regression Error','LASSO Error'])
+    plt.legend(['Regular LS Error','Ridge Regression Error','EN Error'])
     plt.show()
 
 
